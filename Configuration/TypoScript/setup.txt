@@ -123,6 +123,13 @@ page {
 
 		og:locale = {$plugin.tx_otseo.settings.0.languageCode}
 		og:locale.attribute = property
+		# todo edit next lines
+#		og:locale:alternate {
+#			attribute = property
+#			value.1 = fr_FR
+#			value.2 = de_DE
+#		}
+		og:locale.attribute = property
 
 		og:updated_time {
 			stdWrap {
@@ -172,15 +179,6 @@ page {
 		og:type = TEXT
 		og:type.data = TSFE:page|seo_og_type
 		og:type.attribute = property
-
-		og:locale = en_US
-		og:locale.attribute = property
-		# todo edit next lines
-#		og:locale:alternate {
-#			attribute = property
-#			value.1 = fr_FR
-#			value.2 = de_DE
-#		}
 
 		# Twitter
 		twitter:url < og:url.stdWrap.cObject
