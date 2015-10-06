@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2015-08-12T15:30:35Z" product-name="ot_seo">
+		<header/>
+		<body>
+			<trans-unit id="pages.metadata2">
+				<source>Metadata 2</source>
+				<target>Metadaten 2</target>
+			</trans-unit>
+			<trans-unit id="pages.palettes.seo_robots">
+				<source>Meta Robots</source>
+				<target>Meta Robots</target>
+			</trans-unit>
+			<trans-unit id="pages.palettes.seo_opengraph">
+				<source>Open Graph</source>
+				<target>Open Graph</target>
+			</trans-unit>
+			<trans-unit id="pages.canonicalurl">
+				<source>Canonical URL</source>
+				<target>Canonical URL</target>
+			</trans-unit>
+			<trans-unit id="pages.noindex">
+				<source>No Index</source>
+			</trans-unit>
+			<trans-unit id="pages.nofollow">
+				<source>No Follow</source>
+			</trans-unit>
+			<trans-unit id="pages.notranslate">
+				<source>No Translate</source>
+			</trans-unit>
+			<trans-unit id="pages.noimageindex">
+				<source>No Image Index</source>
+			</trans-unit>
+			<trans-unit id="pages.ogtitle">
+				<source>og:title</source>
+			</trans-unit>
+			<trans-unit id="pages.ogimage">
+				<source>og:image (1200x630 Pixel | 1,91:1)</source>
+			</trans-unit>
+			<trans-unit id="pages.ogtype">
+				<source>og:type</source>
+			</trans-unit>
+			<trans-unit id="pages.ogtype.website">
+				<source>Website</source>
+				<target>Webseite</target>
+			</trans-unit>
+			<trans-unit id="pages.ogtype.blog">
+				<source>Blog</source>
+				<target>Blog</target>
+			</trans-unit>
+			<trans-unit id="pages.ogtype.article">
+				<source>Article</source>
+				<source>Artikel</source>
+			</trans-unit>
+			<trans-unit id="pages.ogtype.product">
+				<source>Product</source>
+				<target>Produkt</target>
+			</trans-unit>
+			<trans-unit id="pages.ogtype.profile">
+				<source>Profile</source>
+				<target>Profil</target>
+			</trans-unit>
+			<trans-unit id="pages.ogtype.place">
+				<source>Place</source>
+				<target>Ort</target>
+			</trans-unit>
+			<trans-unit id="pages.ogurl">
+				<source>og:url</source>
+			</trans-unit>
+			<trans-unit id="pages.ogdescription">
+				<source>og:description</source>
+			</trans-unit>
+			<trans-unit id="pages.latitude">
+				<source>Latitude</source>
+				<target>Breitengrad</target>
+			</trans-unit>
+			<trans-unit id="pages.longitude">
+				<source>Longitude</source>
+				<target>Längengrad</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

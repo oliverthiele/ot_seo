@@ -1,0 +1,36 @@
+lib {
+	breadcrumb = HMENU
+	breadcrumb {
+		special = rootline
+		special.range = 0|-1
+		1 = TMENU
+		1 {
+			wrap = <ol class="breadcrumb" vocab="http://schema.org/" typeof="BreadcrumbList">|</ol>
+			NO = 1
+			NO {
+				before.cObject = LOAD_REGISTER
+				before.cObject {
+					tempN.data = register:L1N
+					tempN.wrap = |+1
+					L1N.data = register:tempN
+					L1N.prioriCalc = 1
+				}
+
+
+				wrapItemAndSub = <li property="itemListElement" typeof="ListItem">|</li>
+				stdWrap.wrap = <span property="name">|</span>
+				linkWrap = |<meta property="position" content="{register:L1N}">
+
+				ATagParams = property="item" typeof="WebPage"
+
+				stdWrap.htmlSpecialChars = 1
+				allStdWrap.insertData = 1
+			}
+			CUR < .NO
+			CUR {
+				wrapItemAndSub = <li class="active" property="itemListElement" typeof="ListItem">|</li>
+				doNotLinkIt = 1
+			}
+		}
+	}
+}

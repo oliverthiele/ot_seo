@@ -1,0 +1,26 @@
+plugin.tx_otseo {
+	settings {
+		# cat=PLUGIN.TX_OTSEO//a; type=string; label=Site name:
+		site_name =
+
+		# cat=PLUGIN.TX_OTSEO//l1; type=string; label=Language-Country Code [UID 0]:ISO 639-1 - ISO 3166 (Example: de, de-DE, en-US, ...) See http://www.w3schools.com/tags/ref_language_codes.asp and http://www.w3schools.com/tags/ref_country_codes.asp
+		0 {
+			languageCode = en-US
+		}
+
+		1 {
+			# cat=PLUGIN.TX_OTSEO//l2; type=string; label=Language-Country Code [UID 1]:
+			languageCode =
+		}
+		2 {
+			# cat=PLUGIN.TX_OTSEO//l3; type=string; label=Language Code [UID 2]:
+			languageCode =
+		}
+		3 {
+			# cat=PLUGIN.TX_OTSEO//l4; type=string; label=Language Code [UID 3]:
+			languageCode =
+		}
+		# cat=PLUGIN.TX_OTSEO/links/a; type=string; label=Base URL:Format http://www.example.com/ (Trailing Slash!)
+		baseURL =
+	}
+}

@@ -1,0 +1,456 @@
+/**
+* Extension ot_seo
+*
+* Please set baseURL and all settings in the constant editor
+
+* @see http://www.w3schools.com/tags/ref_language_codes.asp
+* @todo SEO for EXT:news, (News Keywords, Page 55 in book "Technisches Seo")
+* @see http://saney.com/tools/google-snippets-generator.html
+*/
+
+
+plugin {
+	# This setting is needed for the hreflang links in the detail view
+#	tx_news {
+#		settings {
+#			link {
+#				skipControllerAndAction = 1
+#			}
+#		}
+#	}
+	tx_otseo {
+		settings {
+			site_name = {$plugin.tx_otseo.settings.site_name}
+			0.languageCode = {$plugin.tx_otseo.settings.0.languageCode}
+			1.languageCode = {$plugin.tx_otseo.settings.1.languageCode}
+			2.languageCode = {$plugin.tx_otseo.settings.2.languageCode}
+			3.languageCode = {$plugin.tx_otseo.settings.3.languageCode}
+		}
+	}
+}
+
+config {
+	# Don't forget to activate "hideTranslationIfNotTranslated" in the install tool -> All configuration
+	sys_language_mode = strict
+
+	/**
+	 * RealURL Configuration
+	 */
+	prefixLocalAnchors = all
+	tx_realurl_enable = 1
+	uniqueLinkVars = 1
+	baseURL = {$plugin.tx_otseo.settings.baseURL}
+}
+
+page {
+	config {
+		htmlTag_langKey = {$plugin.tx_otseo.settings.0.languageCode}
+		enableContentLengthHeader = 1
+		sys_language_content = {$plugin.tx_otseo.settings.0.languageCode}
+	}
+
+	/**
+	 * Meta
+	 * since TYPO3 7.4 OpenGraph Meta-Data are supported
+	 */
+	meta {
+
+		# ISO 639 , ISO 3166, Sprache sollte htmlTag_langKey entsprechen
+		# deprecated:
+		# content-language = en-us
+		# content-language.httpEquivalent = 1
+
+
+		#  max. 155 characters (512px)
+		description.data = TSFE:page|description
+
+		author.data = TSFE:page|author
+
+		keywords {
+			data = TSFE:page|keywords
+			keywords = 1
+		}
+
+		/**
+		 * OpenGraph
+		 * @see Facebook Testtool https://www.facebook.com/login.php?next=https%3A%2F%2Fdevelopers.facebook.com%2Ftools%2Fdebug%2F
+		 */
+		og:site_name = {$plugin.tx_otseo.settings.site_name}
+		og:site_name.attribute = property
+
+		# SEO Titel or, if SEO-title is not set, the Page title
+		# @todo edit [FE][pageOverlayFields] in install tool
+		og:title.data = TSFE:page|seo_og_title // TSFE:page|title
+		og:title.attribute = property
+
+		og:description.data = TSFE:page|seo_og_description // TSFE:page|description
+		og:description.attribute = property
+
+		/**
+		 * og:image
+		 *
+		 * Small og:image: All the images referenced by og:image should be at least 200px in both dimensions, with 1500×1500 preferred.
+		 * (Maximum image size is 5MB.)
+		 * Please check all the images with tag og:image in the given url and ensure that it meets the recommended specification.
+		 *
+		 * 4:3 or 16:9 (better), 1500 width x 844 hight ?!
+		 */
+		og:image.cObject = COA
+		og:image.cObject {
+			10 = FILES
+			10 {
+				references {
+					table = pages
+					uid.data = TSFE:id
+					fieldName = seoOgImage
+				}
+				maxItems = 1
+				renderObj = IMG_RESOURCE
+				renderObj {
+					stdWrap.prepend = TEXT
+					stdWrap.prepend {
+						data = getIndpEnv: TYPO3_REQUEST_HOST
+						wrap = |/
+					}
+					file.import.data = file:current:publicUrl
+					#file.import.data = file:current:uid
+					#file.treatIdAsReference = 1
+					file.maxW = 1500
+				}
+			}
+		}
+		og:image.attribute = property
+
+		og:locale = {$plugin.tx_otseo.settings.0.languageCode}
+		og:locale.attribute = property
+
+		og:updated_time {
+			stdWrap {
+				data = TSFE:page|SYS_LASTCHANGED // TSFE:page|crdate
+				required = 1
+				date = c
+			}
+		}
+		og:updated_time.attribute = property
+
+		/**
+		 * og:url
+		 *
+		 * @todo replace default action/controller (tx_news)
+		 */
+		og:url.stdWrap.cObject = TEXT
+		og:url.stdWrap.cObject  {
+			stdWrap {
+				orderedStdWrap {
+					10.typolink {
+						# Aktuelle Seite
+						parameter.data = TSFE:id
+						# Gib nur die URL zurück
+						returnLast = url
+						# Erstelle eine absolute URL
+						forceAbsoluteUrl = 1
+						# Fügt alle GET-Parameter hinzu, wie z.B. tt_news, L und auch cHash
+						addQueryString = 1
+						addQueryString.method = GET
+						# Schliesst bestimmte Parameter aus, z.B. cHash oder auch backPid von tt_news
+						addQueryString.exclude = cHash,backPid
+						htmlSpecialChars = 1
+					}
+					20.htmlSpecialChars = 1
+					30.override.field = seo_canonical_url
+				}
+			}
+		}
+		og:url.attribute = property
+
+		/**
+		 * og:type
+		 *
+		 * website, blog, article
+		 * You can add more types in: typo3conf/ext/ot_seo/Configuration/TCA/Overrides/Pages.php
+		 */
+		og:type = TEXT
+		og:type.data = TSFE:page|seo_og_type
+		og:type.attribute = property
+
+		og:locale = en_US
+		og:locale.attribute = property
+		# todo edit next lines
+#		og:locale:alternate {
+#			attribute = property
+#			value.1 = fr_FR
+#			value.2 = de_DE
+#		}
+
+		# Twitter
+		twitter:url < og:url.stdWrap.cObject
+
+		robots {
+			stdWrap.cObject = COA
+			stdWrap.cObject {
+				10 = TEXT
+				10 {
+					value = index
+					override = noindex
+					override.if.isTrue.field = seo_noindex
+				}
+				20 = TEXT
+				20 {
+					value = ,nofollow
+					if.isTrue.field = seo_nofollow
+				}
+				30 = TEXT
+				30 {
+					value = ,notranslate
+					if.isTrue.field = seo_notranslate
+				}
+				40 = TEXT
+				40 {
+					value = ,noimageindex
+					if.isTrue.field = seo_noimageindex
+				}
+			}
+		}
+
+	}
+	headerData {
+		10 = TEXT
+		10 {
+			stdWrap {
+				orderedStdWrap {
+					10.typolink {
+						# Aktuelle Seite
+						parameter.data = TSFE:id
+						# Gib nur die URL zurück
+						returnLast = url
+						# Erstelle eine absolute URL
+						forceAbsoluteUrl = 1
+						# Fügt alle GET-Parameter hinzu, wie z.B. tt_news, L und auch cHash
+						addQueryString = 1
+						addQueryString.method = GET
+						# Schliesst bestimmte Parameter aus, z.B. cHash oder auch backPid von tt_news
+						addQueryString.exclude = cHash,backPid
+						htmlSpecialChars = 1
+					}
+					20.htmlSpecialChars = 1
+					30.override.field = seo_canonical_url
+					40.wrap = <link rel="canonical" href="|" />
+				}
+			}
+		}
+		15 = TEXT
+		15.char = 10
+
+#		19 = LOAD_REGISTER
+#		19 {
+#			currentUrl {
+#				stdWrap {
+#					orderedStdWrap {
+#
+#						10.typolink {
+#							parameter.data = TSFE:id
+#							returnLast = url
+#							addQueryString = 1
+#							addQueryString.method = GET
+#							# Mit L, da die Sprachvarianten unten in die URLs gebaut werden
+#							addQueryString.exclude = L,cHash,backPid
+#							forceAbsoluteUrl = 0
+#						}
+#						20.htmlSpecialChars = 1
+#					}
+#				}
+#			}
+#		}
+
+		/**
+		 * hreflang
+		 *
+		 */
+		20 = USER
+		20 {
+			userFunc = OliverThiele\Utility\MetaHreflangBuilder->getHreflang
+			settings < plugin.tx_otseo.settings
+		}
+
+#		30 = RESTORE_REGISTER
+
+		/**
+		 * fb_admin
+		 *
+		 * Not supportet by TYPO3, but it is possible, to add the Facebook Admins in page.headerData
+		 *
+		 * @see https://developers.facebook.com/docs/platforminsights/domains
+		 */
+		40 = TEXT
+		40 {
+			stdWrap {
+				data = TSFE:page|seo_og_fb_admins
+				required = 1
+				split {
+					token = ,
+					cObjNum = 1
+					1 {
+						10 = TEXT
+						10.stdWrap.current = 1
+						10.stdWrap.trim = 1
+						10.stdWrap.wrap = <meta property="fb:admins" content="|" />
+						20 = TEXT
+						20.char = 10
+					}
+				}
+			}
+		}
+		50 = TEXT
+		50 {
+			stdWrap {
+				data = TSFE:page|seo_og_fb_appid
+				required = 1
+				wrap = <meta property="fb:app_id" content="|" />
+			}
+		}
+
+		55 = TEXT
+		55.char = 10
+
+		60 = TEXT
+		60 {
+			# todo place:location:... only if type = place?!
+			value (
+<meta property="og:latitude"  content="{TSFE:page|seo_latitude}" />
+<meta property="og:longitude" content="{TSFE:page|seo_longitude}" />
+<meta property="place:location:latitude"  content="{TSFE:page|seo_latitude}" />
+<meta property="place:location:longitude" content="{TSFE:page|seo_longitude}" />
+			)
+			# if lat and lng = 0 no output!
+			stdWrap.if.isTrue {
+				cObject = COA
+				cObject {
+					10 = TEXT
+					10 {
+						data = TSFE:page|seo_latitude
+						replacement {
+							10 {
+								search = -
+								replace =
+							}
+						}
+						round.roundType = ceil
+					}
+
+					15 = TEXT
+					15.value = *
+
+					20 < .10
+					20.data = TSFE:page|seo_longitude
+
+					stdWrap.prioriCalc = 1
+				}
+			}
+			stdWrap.insertData = 1
+		}
+	}
+
+	# Example for additional http headers
+#	config {
+#		additionalHeaders {
+#			10 {
+#				header = Link: <http://www.example.com/en-us/{REGISTER:currentUrl}>; rel=alternate; hreflang="en-us"
+#			}
+#		}
+#	}
+
+}
+
+# Configuration for second language
+[globalVar = GP:L=1]
+page {
+	meta {
+		og:locale = {$plugin.tx_otseo.settings.1.languageCode}
+		og:image {
+			10 {
+				references {
+					table = pages_language_overlay
+					uid.data = page:_PAGES_OVERLAY_UID
+				}
+			}
+		}
+	}
+}
+[global]
+
+# Configuration for third language
+[globalVar = GP:L=2]
+page {
+	meta {
+		og:locale = {$plugin.tx_otseo.settings.2.languageCode}
+		og:image {
+			10 {
+				references {
+					table = pages_language_overlay
+					uid.data = page:_PAGES_OVERLAY_UID
+				}
+			}
+		}
+	}
+}
+[global]
+# ...
+[globalVar = GP:L=3]
+page {
+	meta {
+		og:locale = {$plugin.tx_otseo.settings.3.languageCode}
+		og:image {
+			10 {
+				references {
+					table = pages_language_overlay
+					uid.data = page:_PAGES_OVERLAY_UID
+				}
+			}
+		}
+	}
+}
+[global]
+
+/**
+ * EXT:news
+ *
+ * The Extension "news" add some metadata, so we don't need the meta-information twice
+ * page.meta.og:url is not optimal, because the generated link has controller and action in the url
+ * Example: http://www.example.com/news/detail/News/my-news/
+ * The url from EXT:news is http://www.example.com/news/my-news/ without controller and action
+ *
+ * @see method parseUrl() in typo3conf/ext/ot_seo/Classes/Utility/MetaHreflangBuilder.php
+ */
+[globalVar = GP:tx_news_pi1|news > 0]
+# Next config section is needed for the hreflang links in the detail view of EXT:news
+config.defaultGetVars {
+	tx_news_pi1 {
+		controller=News
+		action=detail
+	}
+}
+
+page {
+	meta {
+		og:type >
+		og:title >
+		og:url >
+		# @todo get the author and image from news
+	}
+	headerData {
+		10 {
+			stdWrap {
+				orderedStdWrap {
+					50.replacement {
+						# Remove default Controller/Action in detail view
+						10 {
+							search = detail/News/
+							replace =
+						}
+					}
+				}
+			}
+		}
+	}
+}
+[global]
